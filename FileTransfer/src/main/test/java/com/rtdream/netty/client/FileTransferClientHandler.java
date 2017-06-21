@@ -14,19 +14,19 @@ public class FileTransferClientHandler extends ChannelInboundHandlerAdapter {
 	private int byteRead;
 	private volatile long start = 0;
 	public RandomAccessFile randomAccessFile;
-	private RequestFile request;
+	//private RequestFile request;
 	private final int minReadBufferSize = 81920;//8192;
 	
 
-	public FileTransferClientHandler(RequestFile ef) {
-		if (ef.getFile().exists()) {
-			if (!ef.getFile().isFile()) {
-				System.out.println("Not a file :" + ef.getFile());
-				return;
-			}
-		}
-		this.request = ef;
-	}
+//	public FileTransferClientHandler(RequestFile ef) {
+//		if (ef.getFile().exists()) {
+//			if (!ef.getFile().isFile()) {
+//				System.out.println("Not a file :" + ef.getFile());
+//				return;
+//			}
+//		}
+//		this.request = ef;
+//	}
 
 	/**
 	 * active status invoke
@@ -59,6 +59,7 @@ public class FileTransferClientHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		RequestFile request = GlobalContext.INSTANCE.getRequestFileMap().get("123456");
 		if(msg instanceof SecureModel){
 			try {
 				/**

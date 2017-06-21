@@ -23,6 +23,7 @@ import io.netty.util.concurrent.FutureListener;
 
 import java.io.File;
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutionException;
 
 public class FileTransferClientPoolTest {
 
@@ -56,14 +57,14 @@ public class FileTransferClientPoolTest {
 						ch.pipeline().addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.weakCachingConcurrentResolver(null))); // 最大长度
 						ch.pipeline().addLast(new NettyMessageDecoder());//设置服务器端的编码和解码
 						ch.pipeline().addLast(new NettyMessageEncoder());
-						ch.pipeline().addLast(new FileTransferClientHandler(echoFile));
+						ch.pipeline().addLast(new FileTransferClientHandler());
 					}
 				},2);//单个host连接池大小
 			}
 		};
 	}
 
-	public void send(InetSocketAddress address,final RequestFile msg) {
+	public void send(InetSocketAddress address,final RequestFile msg) throws ExecutionException, InterruptedException {
 		if(address == null){
 			throw new RuntimeException("InetSocketAddress can not be null");
 		}
@@ -71,13 +72,23 @@ public class FileTransferClientPoolTest {
 		final FixedChannelPool pool = this.poolMap.get(address);
 
 		Future<Channel> future = pool.acquire();
-
+		GlobalContext.INSTANCE.getRequestFileMap().put("123456",msg);
+//		ChannelPipeline channelPipeline = future.get().pipeline().addLast("aaa",new FileTransferClientHandler(msg));
+//		channelPipeline.addLast(new NettyMessageDecoder());
+//		channelPipeline.addLast(new NettyMessageEncoder());
+//		for(String str:channelPipeline.names()){
+//			System.out.println(str);
+//		}
+//		future.get().pipeline().remove(FileTransferClientHandler.class);
 		future.addListener(new FutureListener<Channel>() {
-
+			//这里在连接建立之后就会触发
 			public void operationComplete(Future<Channel> f) {
 				if (f.isSuccess()) {
 					Channel ch = f.getNow();
-					ch.pipeline().addLast(new FileTransferClientHandler(msg));
+//					GlobalContext.INSTANCE.getRequestFileMap().remove("123456");
+					//把handler移除掉
+//					ch.pipeline().remove(FileTransferClientHandler.class);
+//					ch.pipeline().addLast(new FileTransferClientHandler(msg));
 //					ChannelFuture lastWriteFuture = null;
 //
 //					lastWriteFuture = ch.writeAndFlush(msg);
