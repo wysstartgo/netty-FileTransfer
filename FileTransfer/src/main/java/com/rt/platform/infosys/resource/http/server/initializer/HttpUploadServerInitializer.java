@@ -1,10 +1,9 @@
-package com.rt.platform.infosys.resource.file.http.server.initializer;
+package com.rt.platform.infosys.resource.http.server.initializer;
 
-import com.rt.platform.infosys.resource.file.http.server.handler.HttpUploadServerHandler;
+import com.rt.platform.infosys.resource.http.server.handler.HttpUploadServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
@@ -22,15 +21,16 @@ public class HttpUploadServerInitializer extends ChannelInitializer<SocketChanne
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
-        //跨域资源共享,它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制
-        //CorsConfig corsConfig = CorsConfigBuilder.forAnyOrigin().build();
+        // 跨域资源共享,它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制
+        // CorsConfig corsConfig = CorsConfigBuilder.forAnyOrigin().build();
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast(new HttpRequestDecoder());
         pipeline.addLast(new HttpResponseEncoder());
 
-        // Remove the following line if you don't want automatic content compression.
-        pipeline.addLast(new HttpContentCompressor());
-
+        // Remove the following line if you don't want automatic content
+        // compression.
+        // pipeline.addLast(new HttpContentCompressor());
+        // pipeline.addLast(new HttpUploadServerSecurityHandler());
         pipeline.addLast(new HttpUploadServerHandler());
     }
 }

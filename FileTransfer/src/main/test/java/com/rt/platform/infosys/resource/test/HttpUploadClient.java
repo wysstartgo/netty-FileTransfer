@@ -1,6 +1,6 @@
-package com.rt.platform.infosys.resource.file.http.client;
+package com.rt.platform.infosys.resource.test;
 
-import com.rt.platform.infosys.resource.file.http.client.initializer.HttpUploadClientInitializer;
+import com.rt.platform.infosys.resource.http.client.initializer.HttpUploadClientInitializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -13,18 +13,17 @@ import io.netty.handler.codec.http.multipart.HttpDataFactory;
 import io.netty.handler.codec.http.multipart.HttpPostRequestEncoder;
 import io.netty.handler.codec.http.multipart.InterfaceHttpData;
 import io.netty.util.internal.SocketUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * <pre>
  *
- * 【标题】: httpUploadclient
+ * 【标题】: httpUploadclient 测试大文件传输，还未完成封装
  * 【描述】: http方式上传的客户端
  * 【版权】: 润投科技
  * 【作者】: wuys
@@ -35,8 +34,8 @@ public final class HttpUploadClient {
 
     static final String FILE = "F:\\spring-tool-suite-3.8.3.RELEASE-e4.6.2-win32-x86_64.zip";// System.getProperty("file",
                                                                                              // "upload.txt");
-
-    public static void main(String[] args) throws Exception {
+    @Test
+    public void testBigFile() throws Exception {
         // Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();
         // setup the factory: here using a mixed memory/disk based on size
@@ -85,7 +84,7 @@ public final class HttpUploadClient {
      *
      * @return the list of headers that will be used in every example after
      **/
-    private static List<Map.Entry<String, String>> formget(Bootstrap bootstrap, String host, int port, String get,
+    private  List<Map.Entry<String, String>> formget(Bootstrap bootstrap, String host, int port, String get,
             URI uriSimple) throws Exception {
         // XXX /formget
         // No use of HttpPostRequestEncoder since not a POST
@@ -141,7 +140,7 @@ public final class HttpUploadClient {
      * @return the list of HttpData object (attribute and file) to be reused on
      *         next post
      */
-    private static List<InterfaceHttpData> formpost(Bootstrap bootstrap, String host, int port, URI uriSimple,
+    private List<InterfaceHttpData> formpost(Bootstrap bootstrap, String host, int port, URI uriSimple,
             File file, HttpDataFactory factory, List<Map.Entry<String, String>> headers) throws Exception {
         // XXX /formpost
         // Start the connection attempt.
@@ -208,7 +207,7 @@ public final class HttpUploadClient {
     /**
      * Multipart example
      */
-    private static void formpostmultipart(Bootstrap bootstrap, String host, int port, URI uriFile,
+    private void formpostmultipart(Bootstrap bootstrap, String host, int port, URI uriFile,
             HttpDataFactory factory, Iterable<Map.Entry<String, String>> headers, List<InterfaceHttpData> bodylist)
             throws Exception {
         // XXX /formpostmultipart

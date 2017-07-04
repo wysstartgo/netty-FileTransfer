@@ -40,7 +40,7 @@ public class FileTransferClient {
 			group.shutdownGracefully();
 		}
 	}
- 
+
 	public static void main(String[] args) {
 		int port = 10012;
 		/*if (args != null && args.length > 0) {
@@ -65,8 +65,8 @@ public class FileTransferClient {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	private static String getSuffix(String fileName)
     {
         String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());

@@ -1,11 +1,12 @@
-package com.rt.platform.infosys.resource.file.http.client.initializer;
+package com.rt.platform.infosys.resource.http.client.initializer;
 
-import com.rt.platform.infosys.resource.file.http.client.handler.HttpUploadClientHandler;
+import com.rt.platform.infosys.resource.http.client.handler.HttpUploadClientHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 
@@ -30,7 +31,8 @@ public class HttpUploadClientInitializer extends ChannelInitializer<SocketChanne
 
         // to be used since huge file transfer
         pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
-
+        pipeline.addLast("httpObjectAggregator",new HttpObjectAggregator(1024000));//1M
         pipeline.addLast("handler", new HttpUploadClientHandler());
+
     }
 }

@@ -57,7 +57,7 @@ public class FileTransferClientPoolTest {
 						ch.pipeline().addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.weakCachingConcurrentResolver(null))); // 最大长度
 						ch.pipeline().addLast(new NettyMessageDecoder());//设置服务器端的编码和解码
 						ch.pipeline().addLast(new NettyMessageEncoder());
-						ch.pipeline().addLast(new FileTransferClientHandler());
+						ch.pipeline().addLast(new FileTransferClientHandler(echoFile));
 					}
 				},2);//单个host连接池大小
 			}
@@ -151,8 +151,8 @@ public class FileTransferClientPoolTest {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	private static String getSuffix(String fileName)
     {
         String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());

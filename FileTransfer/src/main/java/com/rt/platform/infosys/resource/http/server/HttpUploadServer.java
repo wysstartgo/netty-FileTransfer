@@ -1,7 +1,7 @@
-package com.rt.platform.infosys.resource.file.http.server;
+package com.rt.platform.infosys.resource.http.server;
 
-import com.rt.platform.infosys.resource.file.common.model.PropertiesFile;
-import com.rt.platform.infosys.resource.file.http.server.initializer.HttpUploadServerInitializer;
+import com.rt.platform.infosys.resource.common.model.PropertiesFile;
+import com.rt.platform.infosys.resource.http.server.initializer.HttpUploadServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -12,6 +12,7 @@ import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +38,9 @@ public final class HttpUploadServer {
     // 配置信息
     private volatile PropertiesFile propertiesFile = null;
 
+    //spring上下文
+    private ClassPathXmlApplicationContext applicationContext = null;
+
     private HttpUploadServer() {
     }
 
@@ -53,6 +57,7 @@ public final class HttpUploadServer {
      * 执行一些初始化的操作
      */
     private void init() {
+        applicationContext = new ClassPathXmlApplicationContext("classpath:spring/spring-app-resource-dubbo-consumer.xml");
         // 请把加载属性文件放在 加载日志配置的上面，因为读取日志输出的目录配置在 属性文件里面
         propertiesFile = PropertiesFile.buildInstance("resource.properties");
         try {
@@ -78,8 +83,7 @@ public final class HttpUploadServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                     // BACKLOG用于构造服务端套接字ServerSocket对象，标识当服务器请求处理线程全满时，用于临时存放已完成三次握手的请求的队列的最大长度。如果未设置或所设置的值小于1，Java将使用默认值50
-                    .option(ChannelOption.SO_BACKLOG, 1024)
-                    .childHandler(new HttpUploadServerInitializer());
+                    .option(ChannelOption.SO_BACKLOG, 1024).childHandler(new HttpUploadServerInitializer());
 
             ChannelFuture f = b.bind(port).sync();
             LOGGER.info("文件服务器启动成功！端口号：" + port);
@@ -89,11 +93,15 @@ public final class HttpUploadServer {
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            if(applicationContext != null){
+                applicationContext.close();
+            }
         }
     }
 
     /**
      * main方法，在里面执行主要逻辑
+     * 
      * @param args
      */
     public static void main(String[] args) {
@@ -105,4 +113,7 @@ public final class HttpUploadServer {
         server.bind(port);
     }
 
+    public static ClassPathXmlApplicationContext getApplicationContext() {
+        return server.applicationContext;
+    }
 }

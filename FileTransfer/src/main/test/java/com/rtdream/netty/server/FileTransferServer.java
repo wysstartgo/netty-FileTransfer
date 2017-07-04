@@ -8,15 +8,15 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResourceLoader;
 
 import java.io.IOException;
 
 public class FileTransferServer {
 	
-	private Logger log = Logger.getLogger(FileTransferServer.class);
+	private Logger log = LoggerFactory.getLogger(FileTransferServer.class);
 	
 	public void bind(int port) throws Exception {
 		EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -60,17 +60,12 @@ public class FileTransferServer {
 	
 	
 	private static void init(){
-		try
-        {
-			//请把加载属性文件放在 加载日志配置的上面，因为读取日志输出的目录配置在 属性文件里面
-			FileTransferProperties.load("classpath:systemConfig.properties");
+		//请把加载属性文件放在 加载日志配置的上面，因为读取日志输出的目录配置在 属性文件里面
+		FileTransferProperties.load("classpath:systemConfig.properties");
 
-			System.setProperty("WORKDIR", FileTransferProperties.getString("WORKDIR","/"));
+		System.setProperty("WORKDIR", FileTransferProperties.getString("WORKDIR","/"));
 
-            PropertyConfigurator.configure(new FileSystemResourceLoader().getResource(
-                    "classpath:log4j.xml").getInputStream());
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+//            PropertyConfigurator.configure(new FileSystemResourceLoader().getResource(
+//                    "classpath:log4j.xml").getInputStream());
 	}
 }
